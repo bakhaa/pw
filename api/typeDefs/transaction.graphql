@@ -1,0 +1,27 @@
+type Transaction {
+  _id: String
+  amount: Int
+  username: String
+  balance: Int
+  created: String
+}
+
+type transactionsResponse {
+  ok: Boolean
+  transactions: [Transaction]
+  error: Error
+}
+
+type createTransactionResponse {
+  ok: Boolean
+  transaction: Transaction
+  error: Error
+}
+
+type Query {
+  getTransactions: transactionsResponse!
+}
+
+type Mutation {
+  createTransaction(username: String!, amount: Int!): createTransactionResponse!
+}

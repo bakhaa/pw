@@ -1,0 +1,40 @@
+type User {
+  _id: String!
+  email: String!
+  username: String
+  balance: Int
+  created: String
+  updated: String
+}
+
+type filtredUser {
+  _id: String!
+  username: String
+}
+
+type logoutResponse {
+  ok: Boolean
+}
+
+type userResponse {
+  ok: Boolean!
+  user: User
+  errors: [Error!]
+}
+
+type usersResponse {
+  ok: Boolean!
+  users: [filtredUser!]
+  errors: [Error!]
+}
+
+type Query {
+  getUsers(search: String!): usersResponse
+  me: User!
+}
+
+type Mutation {
+  login(email: String!, password: String!): userResponse!
+  logout: logoutResponse
+  register(email: String!, password: String!): userResponse!
+}
