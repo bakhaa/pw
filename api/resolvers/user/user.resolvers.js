@@ -1,5 +1,8 @@
 import passport from 'passport';
 import { UserSchema, isAuthenticated } from '../../models/user';
+import { withFilter } from 'graphql-yoga';
+
+import { PUBSUB_CHANGE_BALANCE } from '../../constants';
 
 export default {
   User: {},
@@ -16,9 +19,9 @@ export default {
     me: async (parent, args, { user, request }) => {
       try {
         isAuthenticated(request);
-        return user;
+        return { ok: true, user };
       } catch (error) {
-        return null;
+        return { ok: true, error: { message: 'Not authenticated' } };
       }
     },
   },
@@ -69,6 +72,16 @@ export default {
           errors: [{ message: 'Error create user', path: 'register' }],
         };
       }
+    },
+  },
+  Subscription: {
+    changeBalance: {
+      subscribe: withFilter(
+        (_, __, { pubsub }) => pubsub.asyncIterator(PUBSUB_CHANGE_BALANCE),
+        (payload, variables, { user }) => {
+          return user && payload.changeBalance.userId === user;
+        }
+      ),
     },
   },
 };

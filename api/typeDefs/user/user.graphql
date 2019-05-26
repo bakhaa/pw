@@ -28,13 +28,28 @@ type usersResponse {
   errors: [Error!]
 }
 
+type meResponse {
+  ok: Boolean!
+  user: User
+  error: Error
+}
+
 type Query {
   getUsers(search: String!): usersResponse
-  me: User
+  me: meResponse!
 }
 
 type Mutation {
   login(email: String!, password: String!): userResponse!
   logout: logoutResponse
   register(email: String!, password: String!): userResponse!
+}
+
+type UserBalance {
+  userId: String!
+  balance: Int!
+}
+
+type Subscription {
+  changeBalance: UserBalance
 }

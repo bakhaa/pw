@@ -2,7 +2,21 @@ import { TransactionSchema } from '../../models/transaction';
 import { UserSchema, isAuthenticated } from '../../models/user';
 import { withFilter } from 'graphql-yoga';
 
-export const PUBSUB_NEW_TRANSACTION = 'PUBSUB_NEW_TRANSACTION ';
+import { PUBSUB_NEW_TRANSACTION, PUBSUB_CHANGE_BALANCE } from '../../constants';
+
+// TODO: move to User Entry
+const changeUserBalance = async (user, amount, pubsub) => {
+  user.balance = user.balance + amount;
+  const updatedUser = await user.save();
+
+  pubsub.publish(PUBSUB_CHANGE_BALANCE, {
+    changeBalance: {
+      userId: updatedUser._id.toString(),
+      balance: updatedUser.balance,
+    },
+  });
+  return updatedUser;
+};
 
 export default {
   Query: {
@@ -52,12 +66,10 @@ export default {
         if (sender.balance < amount) throw new Error('Balance is low.');
 
         // save Sender
-        sender.balance = sender.balance - amount;
-        const updatedSender = await sender.save();
+        const updatedSender = await changeUserBalance(sender, -amount, pubsub);
 
         // save Receiver
-        receiver.balance = receiver.balance + amount;
-        const updatedReceiver = await receiver.save();
+        const updatedReceiver = await changeUserBalance(receiver, amount, pubsub);
 
         // new Transaction
         const newTransaction = new TransactionSchema({
