@@ -30,7 +30,7 @@ type usersResponse {
 
 type Query {
   getUsers(search: String!): usersResponse
-  me: User!
+  me: User
 }
 
 type Mutation {

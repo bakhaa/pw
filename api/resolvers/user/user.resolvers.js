@@ -14,8 +14,12 @@ export default {
       }
     },
     me: async (parent, args, { user, request }) => {
-      isAuthenticated(request);
-      return user;
+      try {
+        isAuthenticated(request);
+        return user;
+      } catch (error) {
+        return null;
+      }
     },
   },
   Mutation: {

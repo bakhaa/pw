@@ -1,5 +1,8 @@
 import { TransactionSchema } from '../../models/transaction';
 import { UserSchema, isAuthenticated } from '../../models/user';
+import { withFilter } from 'graphql-yoga';
+
+export const PUBSUB_NEW_TRANSACTION = 'PUBSUB_NEW_TRANSACTION ';
 
 export default {
   Query: {
@@ -32,7 +35,7 @@ export default {
     },
   },
   Mutation: {
-    createTransaction: async (parent, { amount, username }, { request }) => {
+    createTransaction: async (parent, { amount, username }, { user, request, pubsub }) => {
       try {
         isAuthenticated(request);
         // find receiver
@@ -41,14 +44,11 @@ export default {
           { email: true, balance: true }
         );
         if (!receiver) throw new Error('User not found.');
-        if (receiver._id.toString() === request.user._id.toString())
+        if (receiver._id.toString() === user._id.toString())
           throw new Error('Cannot be transferred to your own account');
 
         // get sender and check Balance
-        const sender = await UserSchema.findOne(
-          { _id: request.user._id },
-          { balance: true, email: true }
-        );
+        const sender = await UserSchema.findOne({ _id: user._id }, { balance: true, email: true });
         if (sender.balance < amount) throw new Error('Balance is low.');
 
         // save Sender
@@ -77,7 +77,7 @@ export default {
 
         const transaction = await newTransaction.save();
 
-        const data = {
+        const senderResponse = {
           _id: transaction._id,
           amount: -amount,
           username,
@@ -85,14 +85,37 @@ export default {
           created: transaction.created,
         };
 
+        const receiverResponse = {
+          _id: transaction._id,
+          amount: amount,
+          username: sender.email,
+          receiverId: receiver._id.toString(),
+          balance: updatedReceiver.balance,
+          created: transaction.created,
+        };
+
+        pubsub.publish(PUBSUB_NEW_TRANSACTION, {
+          newTransaction: receiverResponse,
+        });
+
         return {
           error: null,
           ok: true,
-          transaction: data,
+          transaction: senderResponse,
         };
       } catch (error) {
         return { ok: false, error: { message: error.message } };
       }
+    },
+  },
+  Subscription: {
+    newTransaction: {
+      subscribe: withFilter(
+        (_, __, { pubsub }) => pubsub.asyncIterator(PUBSUB_NEW_TRANSACTION),
+        (payload, variables, { user }) => {
+          return user && payload.newTransaction.receiverId === user;
+        }
+      ),
     },
   },
 };
