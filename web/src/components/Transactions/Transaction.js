@@ -72,8 +72,8 @@ const SmallText = styled(Typography)`
 
 const Transaction = ({ data }) => {
   if (!data) return <LoadingWrap />;
-  const colorAmount = data.amount > 0 ? 'green' : 'red';
-  // console.log('Date.parse(data.created)', moment.toISOString(data.created));
+  const colorAmount = data.amount > 0 ? '#00b300' : '#ff0023';
+
   return (
     <Wrap>
       <Top>
@@ -92,7 +92,7 @@ const Transaction = ({ data }) => {
       </Top>
 
       <DateWrap>
-        <SmallText>{data.created}</SmallText>
+        <SmallText>{moment(data.created).format('DD.MM.YYYY HH:mm')}</SmallText>
       </DateWrap>
     </Wrap>
   );

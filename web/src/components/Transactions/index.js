@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import gql from 'graphql-tag';
-import { Query } from 'react-apollo';
+import { Query, Subscription } from 'react-apollo';
 import Transaction from './Transaction';
 
 const Wrap = styled.section`
@@ -28,10 +28,28 @@ const GET_TRANSACTIONS = gql`
   }
 `;
 
+const NEW_TRANSACTION = gql`
+  subscription {
+    newTransaction {
+      _id
+      amount
+      username
+      created
+      balance
+    }
+  }
+`;
+
 const Transactions = () => (
   <Wrap>
+    <Subscription subscription={NEW_TRANSACTION}>
+      {({ loading, data }) => {
+        if (loading || !data) return null;
+        return <Transaction data={data.newTransaction} />;
+      }}
+    </Subscription>
     <Query query={GET_TRANSACTIONS}>
-      {({ loading, data, error }) => {
+      {({ loading, data }) => {
         if (loading) {
           const fakeData = new Array(7).fill('');
           return fakeData.map((item, idx) => <Transaction key={idx} />);

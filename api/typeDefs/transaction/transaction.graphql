@@ -1,9 +1,11 @@
+scalar Date
+
 type Transaction {
   _id: String
   amount: Int
   username: String
   balance: Int
-  created: String
+  created: Date
 }
 
 type transactionsResponse {

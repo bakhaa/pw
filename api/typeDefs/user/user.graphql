@@ -1,10 +1,12 @@
+scalar Date
+
 type User {
   _id: String!
   email: String!
   username: String
   balance: Int
-  created: String
-  updated: String
+  created: Date
+  updated: Date
 }
 
 type filtredUser {

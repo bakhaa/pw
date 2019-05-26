@@ -20,11 +20,11 @@ const ME = gql`
 
 const AuthRoute = ({ component: Component, ...rest }) => (
   <Query query={ME} fetchPolicy="no-cache">
-    {({ loading, error, data }) => {
+    {({ loading, data }) => {
       if (!loading && data.me.user) {
         return <Component me={data.me.user} {...rest} />;
       }
-      if (!loading && data.me.error) {
+      if (!loading && !data.me.user) {
         return <Redirect to={{ pathname: '/login' }} />;
       }
       return <div>Loading...</div>;
