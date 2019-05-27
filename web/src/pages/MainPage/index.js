@@ -1,15 +1,13 @@
 import React from 'react';
-import styled from 'styled-components';
 
 import UserInfo from '../../components/UserInfo';
 import Transactions from '../../components/Transactions';
+import CreateTransaction from '../../components/CreateTransaction';
 
-const SearchUsers = styled.div``;
-
-const MainPage = ({ me, ...own }) => (
+const MainPage = ({ me }) => (
   <>
     <UserInfo me={me} />
-    <SearchUsers />
+    <CreateTransaction />
     <Transactions />
   </>
 );

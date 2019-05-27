@@ -1,12 +1,14 @@
 import React, { PureComponent } from 'react';
 import { withApollo, Mutation, Subscription } from 'react-apollo';
-import gql from 'graphql-tag';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
 
 import { Typography } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import LogoutIcon from '@material-ui/icons/ExitToApp';
+
+import { LOGOUT, CHANGE_BALANCE } from '../../graphQl/user';
 
 const Wrap = styled.header`
   height: 80px;
@@ -32,23 +34,6 @@ const Logout = styled.div`
 
 const Balance = styled.div`
   justify-content: center;
-`;
-
-const CHANGE_BALANCE = gql`
-  subscription {
-    changeBalance {
-      userId
-      balance
-    }
-  }
-`;
-
-const LOGOUT = gql`
-  mutation {
-    logout {
-      ok
-    }
-  }
 `;
 
 class UserInfo extends PureComponent {
@@ -88,5 +73,10 @@ class UserInfo extends PureComponent {
     );
   }
 }
+
+UserInfo.propTypes = {
+  me: PropTypes.any,
+  history: PropTypes.any,
+};
 
 export default withRouter(withApollo(UserInfo));
