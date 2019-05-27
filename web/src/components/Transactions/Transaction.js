@@ -13,6 +13,7 @@ const Wrap = styled.div`
   border-radius: 3px;
   padding: 0 50px;
   flex-direction: column;
+  border: 1px solid transparent;
 `;
 
 const loading = keyframes`
@@ -33,6 +34,7 @@ const LoadingWrap = styled.div`
   padding: 0 50px;
   background-color: rgba(51, 51, 51, 0.08);
   animation: ${loading} 1.5s infinite;
+  border: 1px solid transparent;
 `;
 
 const Top = styled.div`

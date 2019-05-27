@@ -10,7 +10,9 @@ export default {
     getUsers: async (_, { search }, { request }) => {
       try {
         isAuthenticated(request);
-        const users = await UserSchema.find({ username: { $regex: search } }).exec();
+        const users = await UserSchema.find({ username: { $regex: search } })
+          .limit(10)
+          .exec();
         return { ok: true, errors: [], users };
       } catch (error) {
         return { ok: false, errors: [{ message: error.message, path: 'login' }] };

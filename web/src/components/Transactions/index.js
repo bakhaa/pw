@@ -11,7 +11,6 @@ import { NEW_TRANSACTION, GET_TRANSACTIONS } from '../../graphQl/transactions';
 const Wrap = styled.section`
   display: flex;
   width: 70%;
-  justify-content: center;
   align-items: flex-start;
   padding: 20px 0;
   flex-direction: column;

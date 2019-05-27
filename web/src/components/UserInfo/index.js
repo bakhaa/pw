@@ -61,7 +61,7 @@ class UserInfo extends PureComponent {
               <IconButton
                 onClick={() => {
                   logout();
-                  history.push('/login');
+                  window.location.reload();
                 }}
               >
                 <LogoutIcon />
