@@ -10,13 +10,13 @@ git clone https://github.com/bakhaa/pw
 
 2. Run mongodb server `mongod`
 
-3. Run and start api server
+3. Run api server
 
 ```
 cd api && yarn run start
 ```
 
-4. Run and start web server
+4. Run web server
 
 ```
 cd web && yarn run start
