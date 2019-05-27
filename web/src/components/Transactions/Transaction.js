@@ -9,7 +9,7 @@ const Wrap = styled.div`
   margin-bottom: 10px;
   display: flex;
   justify-content: center;
-  width: 100%;
+  width: 400px;
   border-radius: 3px;
   padding: 0 50px;
   flex-direction: column;
@@ -28,7 +28,7 @@ const LoadingWrap = styled.div`
   background: #e8eaeb;
   height: 70px;
   margin-bottom: 10px;
-  width: 100%;
+  width: 400px;
   border-radius: 3px;
   padding: 0 50px;
   background-color: rgba(51, 51, 51, 0.08);

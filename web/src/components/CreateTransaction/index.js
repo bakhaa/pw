@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { graphql, compose } from 'react-apollo';
 import { withFormik } from 'formik';
@@ -36,49 +36,61 @@ const CreateTransaction = ({
   errors,
   status,
   handleBlur,
-}) => (
-  <Wrap>
-    <Top>
-      <TextField
-        style={{ width: 200, height: 40, marginTop: 0 }}
-        id="outlined-bare"
-        value={values.username}
-        name="username"
-        placeholder="Enter Username"
-        error={errors.username && (touched.username || (status && status.submitted))}
-        margin="normal"
-        variant="outlined"
-        onChange={handleChange}
-        onBlur={handleBlur}
-      />
-      <TextField
-        style={{ width: 300, height: 40, marginTop: 0, marginLeft: 5 }}
-        id="outlined-bare"
-        value={values.amount}
-        name="amount"
-        error={errors.amount && (touched.amount || (status && status.submitted))}
-        placeholder="Enter amount"
-        margin="normal"
-        variant="outlined"
-        onChange={handleChange}
-        onBlur={handleBlur}
-      />
-      <Button
-        variant="outlined"
-        disabled={
-          isSubmitting
-          || !!(errors.username || errors.amount)
-          || (!values.username.length || !values.amount.length)
-        }
-        style={{ height: 40, marginLeft: 10, marginRight: 10 }}
-        color="primary"
-        onClick={handleSubmit}
-      >
-        {isSubmitting ? 'Submitting...' : 'Create'}
-      </Button>
-    </Top>
-  </Wrap>
-);
+  setSearch,
+  search,
+  setFieldValue,
+}) => {
+  useEffect(() => {
+    if (search.length) setFieldValue('username', search);
+  }, [search]);
+
+  return (
+    <Wrap>
+      <Top>
+        <TextField
+          style={{ width: 200, height: 40, marginTop: 0 }}
+          id="outlined-bare"
+          value={values.username}
+          name="username"
+          placeholder="Enter Username"
+          error={errors.username && (touched.username || (status && status.submitted))}
+          margin="normal"
+          variant="outlined"
+          onChange={e => {
+            handleChange(e);
+            setSearch(e.target.value);
+          }}
+          onBlur={handleBlur}
+        />
+        <TextField
+          style={{ width: 300, height: 40, marginTop: 0, marginLeft: 5 }}
+          id="outlined-bare"
+          value={values.amount}
+          name="amount"
+          error={errors.amount && (touched.amount || (status && status.submitted))}
+          placeholder="Enter amount"
+          margin="normal"
+          variant="outlined"
+          onChange={handleChange}
+          onBlur={handleBlur}
+        />
+        <Button
+          variant="outlined"
+          disabled={
+            isSubmitting
+            || !!(errors.username || errors.amount)
+            || !(values.username.length && values.amount.length)
+          }
+          style={{ height: 40, marginLeft: 10, marginRight: 10 }}
+          color="primary"
+          onClick={handleSubmit}
+        >
+          {isSubmitting ? 'Submitting...' : 'Create'}
+        </Button>
+      </Top>
+    </Wrap>
+  );
+};
 
 CreateTransaction.propTypes = {
   values: PropTypes.object.isRequired,
@@ -89,6 +101,9 @@ CreateTransaction.propTypes = {
   errors: PropTypes.object.isRequired,
   status: PropTypes.any,
   handleBlur: PropTypes.func.isRequired,
+  setSearch: PropTypes.func.isRequired,
+  setFieldValue: PropTypes.func.isRequired,
+  search: PropTypes.string.isRequired,
 };
 
 export default compose(
@@ -98,15 +113,11 @@ export default compose(
     mapPropsToValues: () => ({ username: '', amount: '' }),
     handleSubmit: async (
       values,
-      { props: { mutate, enqueueSnackbar }, setSubmitting, setStatus, resetForm },
+      { props: { mutate, enqueueSnackbar, search, setSearch }, setSubmitting, setStatus, resetForm },
     ) => {
-      if (values.username === '') {
-        setSubmitting(false);
-        return;
-      }
       await mutate({
         variables: {
-          username: values.username,
+          username: search || values.username,
           amount: parseInt(values.amount, 10),
         },
         update: (store, { data: { createTransaction } }) => {
@@ -130,6 +141,7 @@ export default compose(
             },
           );
 
+          setSearch('');
           resetForm();
           setStatus({ submitted: true });
           setSubmitting(false);
@@ -137,8 +149,8 @@ export default compose(
       });
     },
     validationSchema: Yup.object().shape({
+      amount: Yup.number().required('Amount is required'),
       username: Yup.string().required('Username is required'),
-      amount: Yup.number('Amount must be a `number`').required('Amount is required'),
     }),
   }),
 )(CreateTransaction);

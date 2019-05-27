@@ -9,11 +9,10 @@ import Transaction from './Transaction';
 import { NEW_TRANSACTION, GET_TRANSACTIONS } from '../../graphQl/transactions';
 
 const Wrap = styled.section`
-  margin: 0 auto;
   display: flex;
-  width: 500px;
+  width: 70%;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   padding: 20px 0;
   flex-direction: column;
 `;

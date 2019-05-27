@@ -6,7 +6,6 @@ import { SnackbarProvider } from 'notistack';
 import * as serviceWorker from './serviceWorker';
 import { client } from './apollo';
 import Routes from './routes';
-// import App from './App';
 
 ReactDOM.render(
   <ApolloProvider client={client}>

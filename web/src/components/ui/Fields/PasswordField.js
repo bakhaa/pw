@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import TextField from '@material-ui/core/TextField';
 import InputAdornment from '@material-ui/core/InputAdornment';
@@ -39,5 +40,16 @@ const PasswordField = ({
     }}
   />
 );
+
+PasswordField.propTypes = {
+  value: PropTypes.string.isRequired,
+  error: PropTypes.any,
+  showPassword: PropTypes.bool.isRequired,
+  name: PropTypes.string.isRequired,
+  placeholder: PropTypes.string.isRequired,
+  onChange: PropTypes.func.isRequired,
+  onBlur: PropTypes.any,
+  onChangeShowPassword: PropTypes.func.isRequired,
+};
 
 export default PasswordField;
