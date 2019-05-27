@@ -42,7 +42,7 @@ const CreateTransaction = ({
 }) => {
   useEffect(() => {
     if (search.length) setFieldValue('username', search);
-  }, [search]);
+  }, [search !== values.username]);
 
   return (
     <Wrap>
